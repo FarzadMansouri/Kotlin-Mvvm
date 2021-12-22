@@ -1,6 +1,6 @@
 package com.example.mydi.datasource
 
-import com.example.mydi.remote.RetrofitService
+import com.example.mydi.remote.RemoteDataSource
 
-class UserRemoteDataSource(service:RetrofitService) {
+class UserRemoteDataSource(service:RemoteDataSource) {
 }

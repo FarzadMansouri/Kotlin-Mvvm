@@ -1,16 +1,13 @@
 package com.example.mydi.repo
 
-import com.example.mydi.datasource.UserLocalDataSource
-import com.example.mydi.datasource.UserRemoteDataSource
-import com.example.mydi.remote.EndPoint
+import com.example.mydi.remote.ClientApi
 
 class LoginRepository(
-    val endPoint: EndPoint
+    private val api: ClientApi
 ) : BaseRepository() {
 
-
-    val loginUser=safeApi {
-
+    suspend fun userInfo(username:String) = safeApi {
+        api.userInfo(username)
     }
 
 }
