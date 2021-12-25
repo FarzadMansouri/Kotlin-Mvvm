@@ -1,4 +1,4 @@
-package com.example.mydi
+package com.example.train
 
 import org.junit.Test
 

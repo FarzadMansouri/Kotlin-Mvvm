@@ -1,13 +1,10 @@
-package com.example.mydi.remote
+package com.example.train.remote
 
-import com.example.mydi.utils.AppContainer
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.example.train.utils.AppContainer
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.util.concurrent.TimeUnit
 
 class RemoteDataSource {
 

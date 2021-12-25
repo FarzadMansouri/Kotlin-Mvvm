@@ -1,13 +1,13 @@
-package com.example.mydi.view.fragment
+package com.example.train.view.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.example.mydi.databinding.FragmentUserBinding
-import com.example.mydi.repo.UserRepository
-import com.example.mydi.utils.BaseFragment
-import com.example.mydi.viewmodel.UserViewModel
+import com.example.train.databinding.FragmentUserBinding
+import com.example.train.repo.UserRepository
+import com.example.train.utils.BaseFragment
+import com.example.train.viewmodel.UserViewModel
 
 class UserFragment : BaseFragment<UserViewModel, FragmentUserBinding, UserRepository>() {
     override fun getViewModel(): Class<UserViewModel> = UserViewModel::class.java

@@ -1,4 +1,4 @@
-package com.example.mydi.remote
+package com.example.train.remote
 
 import okhttp3.ResponseBody
 

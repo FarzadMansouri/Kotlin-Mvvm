@@ -1,10 +1,10 @@
-package com.example.mydi.view
+package com.example.train.view
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
-import com.example.mydi.R
-import com.example.mydi.databinding.ActivityLoginBinding
+import com.example.train.R
+import com.example.train.databinding.ActivityLoginBinding
 
 class LoginActivity : AppCompatActivity() {
 

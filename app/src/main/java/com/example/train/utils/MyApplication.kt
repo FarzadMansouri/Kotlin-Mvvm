@@ -1,4 +1,4 @@
-package com.example.mydi.utils
+package com.example.train.utils
 
 import android.app.Application
 

@@ -1,10 +1,9 @@
-package com.example.mydi.repo
+package com.example.train.repo
 
-import com.example.mydi.remote.Resource
+import com.example.train.remote.Resource
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
-import retrofit2.Response
 
 abstract class BaseRepository {
 
