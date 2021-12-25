@@ -1,10 +1,9 @@
-package com.example.mydi.viewmodel
+package com.example.train.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.mydi.repo.BaseRepository
-import com.example.mydi.repo.LoginRepository
-import java.lang.IllegalArgumentException
+import com.example.train.repo.BaseRepository
+import com.example.train.repo.LoginRepository
 
 class ViewModelFactory(
     private val repository: BaseRepository

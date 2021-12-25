@@ -1,4 +1,4 @@
-package com.example.mydi.viewmodel
+package com.example.train.viewmodel
 
 import androidx.lifecycle.ViewModel
 
