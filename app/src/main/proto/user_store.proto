@@ -1,5 +1,5 @@
 syntax = "proto3";
-option java_package = "ir.frzd.train";
+option java_package = "com.example.train";
 option java_multiple_files = true;
 
 message UserStore{

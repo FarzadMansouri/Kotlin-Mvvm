@@ -7,28 +7,38 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
+import com.example.train.UserStore
 import com.example.train.databinding.FragmentLoginBinding
 import com.example.train.remote.Resource
 import com.example.train.repo.LoginRepository
 import com.example.train.utils.BaseFragment
+import com.example.train.utils.PreferencesKeys
 import com.example.train.utils.enable
 import com.example.train.utils.visible
 import com.example.train.viewmodel.LoginViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import okhttp3.internal.notifyAll
 
 class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, LoginRepository>() {
     override fun getViewModel(): Class<LoginViewModel> = LoginViewModel::class.java
     override fun getRepository(): LoginRepository =
         LoginRepository(remoteDataSource.makeApi(com.example.train.remote.ClientApi::class.java))
+    private var isProto=false
+    private var isPrefs=false
 
-    companion object{
+    companion object {
         private const val TAG = "LoginFragment"
     }
-    
+
     override fun fragmentBinding(
         inflater: LayoutInflater,
         container: ViewGroup?
@@ -37,16 +47,19 @@ class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, Login
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        binding.btnLogin.enable(false)
+        binding.btnProtoType.enable(false)
+        binding.btnPreferences.enable(false)
         binding.loadingLogin.visible(false)
 
         binding.textUsername.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                binding.btnLogin.enable(false)
+                binding.btnProtoType.enable(false)
+                binding.btnPreferences.enable(false)
             }
 
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-                binding.btnLogin.enable(!binding.usernameField.editText?.text.isNullOrEmpty())
+                binding.btnProtoType.enable(!binding.usernameField.editText?.text.isNullOrEmpty())
+                binding.btnPreferences.enable(!binding.usernameField.editText?.text.isNullOrEmpty())
 
             }
 
@@ -55,12 +68,25 @@ class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, Login
         })
 
 
-        binding.btnLogin.setOnClickListener {
+        binding.btnProtoType.setOnClickListener {
             if (binding.usernameField.editText?.text.isNullOrEmpty()) {
                 binding.usernameField.editText?.error = "Enter Username"
             } else {
-                binding.btnLogin.enable(true)
+                binding.btnProtoType.enable(true)
                 binding.loadingLogin.visible(true)
+                isProto=true
+                isPrefs=false
+                viewModel.userInfo(binding.usernameField.editText?.text.toString())
+            }
+        }
+        binding.btnPreferences.setOnClickListener {
+            if (binding.usernameField.editText?.text.isNullOrEmpty()) {
+                binding.usernameField.editText?.error = "Enter Username"
+            } else {
+                binding.btnPreferences.enable(true)
+                binding.loadingLogin.visible(true)
+                isProto=false
+                isPrefs=true
                 viewModel.userInfo(binding.usernameField.editText?.text.toString())
             }
         }
@@ -77,29 +103,18 @@ class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, Login
                         .circleCrop()
                         .into(binding.userImageView)
 
-                    lifecycleScope.launch {
-                        requireContext().userDataStore.updateData { store ->
-                            store.toBuilder()
-                                .setName(it.value.name)
-                                .setId(it.value.id)
-                                .build()
+  binding.textUserInfo.text =
+  "${it.value.bio} \t\n ${it.value.company} \t\n  \t\n ${it.value.id} \t\n ${it.value.login} \t\n ${it.value.location} "
 
-                        }
+
+                    if(isProto){
+                        saveProtoData(it.value)
+                        readProtoType()
                     }
-
-                    binding.textUserInfo.text =
-                        "${it.value.bio} \t\n ${it.value.company} \t\n ${it.value.followers} \t\n ${it.value.id} \t\n ${it.value.name} \t\n ${it.value.location} \t\n ${it.value.site_admin}"
-
-
-                    Handler().postDelayed({
-                        lifecycleScope.launch(Dispatchers.IO) {
-                            requireContext().userDataStore.data.map {
-
-                                Log.d(TAG, "onActivityCreated: ${it.name } ${it.id}")
-                            }
-                        }
-                    }, 5000)
-
+                    if(isPrefs){
+                        saveUserPreferences(it.value.login)
+                    readUserPreferences()
+                    }
 
                 }
                 is Resource.Failure -> {
@@ -110,9 +125,7 @@ class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, Login
         })
 
 
-
-
-
     }
+
 
 }

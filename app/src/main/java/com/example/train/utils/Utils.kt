@@ -31,17 +31,17 @@ fun View.enable(enable: Boolean) {
     alpha = if (enable) 1f else .5f
 }
 
-object UserSerializer:Serializer<UserStore>{
+object UserSerializer : Serializer<UserStore> {
     override val defaultValue: UserStore = UserStore.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): UserStore {
         try {
-                return UserStore.parseFrom(input)
-        }catch (ex:InvalidProtocolBufferException){
-            throw CorruptionException("Cannot Read Proto",ex)
+            return UserStore.parseFrom(input)
+        } catch (exception: InvalidProtocolBufferException) {
+            throw CorruptionException("Cannot read proto.", exception)
         }
-    }
 
-    override suspend fun writeTo(t: UserStore, output: OutputStream) =t.writeTo(output)
+    }
+    override suspend fun writeTo(t: UserStore, output: OutputStream) = t.writeTo(output)
 
 }
