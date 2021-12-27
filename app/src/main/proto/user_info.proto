@@ -1,0 +1,13 @@
+syntax = "proto3";
+option java_package = "com.example.train";
+option java_multiple_files = true;
+
+message UserInfo{
+  string avatar_url=1;
+  string bio=2;
+  string company=3;
+  string node_id=4;
+  int32 id=5;
+  string login=6;
+  string location=7;
+}

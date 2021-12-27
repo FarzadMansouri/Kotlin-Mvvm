@@ -2,38 +2,32 @@ package com.example.train.view.fragment
 
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
-import com.example.train.UserStore
+import com.example.train.UserInfo
 import com.example.train.databinding.FragmentLoginBinding
 import com.example.train.remote.Resource
 import com.example.train.repo.LoginRepository
 import com.example.train.utils.BaseFragment
-import com.example.train.utils.PreferencesKeys
 import com.example.train.utils.enable
 import com.example.train.utils.visible
 import com.example.train.viewmodel.LoginViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.map
+import com.google.gson.Gson
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import okhttp3.internal.notifyAll
 
 class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, LoginRepository>() {
     override fun getViewModel(): Class<LoginViewModel> = LoginViewModel::class.java
     override fun getRepository(): LoginRepository =
         LoginRepository(remoteDataSource.makeApi(com.example.train.remote.ClientApi::class.java))
-    private var isProto=false
-    private var isPrefs=false
+
+    private var isProto = false
+    private var isPrefs = false
 
     companion object {
         private const val TAG = "LoginFragment"
@@ -74,8 +68,8 @@ class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, Login
             } else {
                 binding.btnProtoType.enable(true)
                 binding.loadingLogin.visible(true)
-                isProto=true
-                isPrefs=false
+                isProto = true
+                isPrefs = false
                 viewModel.userInfo(binding.usernameField.editText?.text.toString())
             }
         }
@@ -85,8 +79,8 @@ class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, Login
             } else {
                 binding.btnPreferences.enable(true)
                 binding.loadingLogin.visible(true)
-                isProto=false
-                isPrefs=true
+                isProto = false
+                isPrefs = true
                 viewModel.userInfo(binding.usernameField.editText?.text.toString())
             }
         }
@@ -103,17 +97,37 @@ class LoginFragment() : BaseFragment<LoginViewModel, FragmentLoginBinding, Login
                         .circleCrop()
                         .into(binding.userImageView)
 
-  binding.textUserInfo.text =
-  "${it.value.bio} \t\n ${it.value.company} \t\n  \t\n ${it.value.id} \t\n ${it.value.login} \t\n ${it.value.location} "
+                    binding.textUserInfo.text =
+                        "${it.value.bio} \t\n ${it.value.company} \t\n  \t\n ${it.value.id} \t\n ${it.value.login} \t\n ${it.value.location} "
 
 
-                    if(isProto){
-                        saveProtoData(it.value)
-                        readProtoType()
+
+                    if (isProto) {
+                        lifecycleScope.launch {
+                            dataStore.saveUserInfoProto(it.value)
+                        }
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            lifecycleScope.launch {
+                                Log.d(TAG, "Proto User Info : ${dataStore.readUserInfoProto()} ")
+                            }
+
+                        }, 1000)
+
                     }
-                    if(isPrefs){
-                        saveUserPreferences(it.value.login)
-                    readUserPreferences()
+                    if (isPrefs) {
+                        lifecycleScope.launch {
+                            dataStore.saveUserInfoPrefs(it.value)
+                        }
+
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            lifecycleScope.launch {
+                                dataStore.readUserInfoPrefs().collect{
+                                    Log.d(TAG, "Proto User Info : ${it} ")
+                                }
+                            }
+
+                        }, 3000)
                     }
 
                 }

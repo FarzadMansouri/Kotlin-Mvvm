@@ -3,12 +3,6 @@ package com.example.train.utils
 import android.app.Activity
 import android.content.Intent
 import android.view.View
-import androidx.datastore.core.CorruptionException
-import androidx.datastore.core.Serializer
-import com.example.train.UserStore
-import com.google.protobuf.InvalidProtocolBufferException
-import java.io.InputStream
-import java.io.OutputStream
 
 
 fun <A : Activity> Activity.startNewActivity(activity: Class<A>) {
@@ -31,17 +25,3 @@ fun View.enable(enable: Boolean) {
     alpha = if (enable) 1f else .5f
 }
 
-object UserSerializer : Serializer<UserStore> {
-    override val defaultValue: UserStore = UserStore.getDefaultInstance()
-
-    override suspend fun readFrom(input: InputStream): UserStore {
-        try {
-            return UserStore.parseFrom(input)
-        } catch (exception: InvalidProtocolBufferException) {
-            throw CorruptionException("Cannot read proto.", exception)
-        }
-
-    }
-    override suspend fun writeTo(t: UserStore, output: OutputStream) = t.writeTo(output)
-
-}
